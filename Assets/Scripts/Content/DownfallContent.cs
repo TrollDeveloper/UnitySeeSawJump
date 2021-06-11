@@ -12,6 +12,9 @@ public class DownfallContent : InGameContentBase
         Message.Send(new CharacterChangeStateFromGameStateMsg(GameStateManager.State.Downfall));
         //Camera State Change.
         Message.Send(new CameraStateChangeMsg(CameraController.State.Downfall));
+
+        Message.AddListener<CharacterDownfallCompleteMsg>(OnCharacterDownfallCompleteMsg);
+
         //StartCoroutine Character Downfall StartDelay.
         StartCoroutine(DownfallStartCoroutine());
     }
@@ -21,6 +24,8 @@ public class DownfallContent : InGameContentBase
         base.Exit();
         //Background Display Turn Off.
         //Control UI Off.
+
+        MessageHelper.RemoveListenerEndFrame<CharacterDownfallCompleteMsg>(OnCharacterDownfallCompleteMsg);
     }
 
     IEnumerator DownfallStartCoroutine()
@@ -31,7 +36,7 @@ public class DownfallContent : InGameContentBase
         //Control UI ON.
     }
 
-    void OnCharacterDownfallCompleteMsg()
+    void OnCharacterDownfallCompleteMsg(CharacterDownfallCompleteMsg msg)
     {
         StartCoroutine(DownfallEndCoroutine());
     }

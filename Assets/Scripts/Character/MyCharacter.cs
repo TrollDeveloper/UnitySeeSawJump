@@ -15,6 +15,10 @@ public class CharacterRocketCompleteMsg : Message
 {
 
 }
+public class CharacterDownfallCompleteMsg : Message
+{
+
+}
 public partial class MyCharacter : MonoBehaviour
 {
     public enum State
@@ -50,7 +54,10 @@ public partial class MyCharacter : MonoBehaviour
 
     Transform targetSeeSawSocket = null;
 
-    Sequence seq;
+    Sequence lastSequence;
+    Coroutine stateEnterCoroutine = null;
+
+    float controlDirection = 0f;
 
     private void Awake()
     {
@@ -69,30 +76,25 @@ public partial class MyCharacter : MonoBehaviour
     {
         switch (state)
         {
-            case State.None:
-                break;
-            case State.IntroWait:
-                break;
-            case State.IntroJumping:
-                break;
-            case State.SeeSawJumpingWait:
-                break;
-            case State.SeeSawJumping:
-                break;
-            case State.SeeSawLandingWait:
-                break;
-            case State.SeeSawLanding:
-                break;
-            case State.SeeSawLandingFail:
-                break;
             case State.RocketJumping:
-                transform.position += Vector3.up * Time.deltaTime;
-                break;
-            case State.DonwfallWait:
+                transform.position += Vector3.up * Time.deltaTime * 15f;
+                if (transform.position.y > 50f)
+                {
+                    Message.Send<GameStateChangeMsg>(new GameStateChangeMsg(GameStateManager.State.Downfall));
+                }
                 break;
             case State.Downfall:
+                transform.position -= Vector3.up * Time.deltaTime * 10f;
+                transform.position += controlDirection * Vector3.right * 5f * Time.deltaTime;
+
+                if (transform.position.y < 15f)
+                {
+                    Message.Send<CharacterDownfallCompleteMsg>(new CharacterDownfallCompleteMsg());
+                }
                 break;
         }
+
+        controlDirection = 0f;
     }
 
     public void ChangeState(State newState)
@@ -103,12 +105,18 @@ public partial class MyCharacter : MonoBehaviour
         }
         gameObject.SetActive(true);
 
-        if (seq != null)
+        if (lastSequence != null)
         {
-            seq.Kill();
-            seq = null;
+            lastSequence.Kill();
+            lastSequence = null;
         }
         transform.DOKill();
+        if (stateEnterCoroutine != null)
+        {
+            StopCoroutine(stateEnterCoroutine);
+        }
+        stateEnterCoroutine = null;
+
         switch (state)
         {
             case State.None:
@@ -129,6 +137,7 @@ public partial class MyCharacter : MonoBehaviour
                 break;
             case State.SeeSawLandingComplete:
                 transform.parent = null;
+                transform.localRotation = Quaternion.identity;
                 break;
             case State.RocketJumping:
                 break;
@@ -153,13 +162,13 @@ public partial class MyCharacter : MonoBehaviour
                 break;
             case State.IntroJumping:
                 transform.position = targetSeeSawSocket.position;
-                seq = DOTween.Sequence();
-                
-                seq.Append(transform.DOMove(transform.position + Vector3.up * 3f, 1.5f).SetEase(Ease.OutCubic));
+                lastSequence = DOTween.Sequence();
+
+                lastSequence.Append(transform.DOMove(transform.position + Vector3.up * 3f, 1.5f).SetEase(Ease.OutCubic));
 
                 var tween = transform.DOMove(targetSeeSawSocket.position, 0.5f);
                 tween.onComplete = () => { Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg()); };
-                seq.AppendInterval(0.5f).Append(tween);
+                lastSequence.AppendInterval(0.5f).Append(tween);
 
                 break;
             case State.SeeSawJumpingWait:
@@ -170,8 +179,14 @@ public partial class MyCharacter : MonoBehaviour
                     () => { Message.Send<CharacterJumpingCompleteMsg>(new CharacterJumpingCompleteMsg()); };
                 break;
             case State.SeeSawLandingWait:
+                transform.position = targetSeeSawSocket.transform.position + Vector3.up * 15f;
                 break;
             case State.SeeSawLanding:
+
+                tween = transform.DOMove(targetSeeSawSocket.position, 0.5f);
+                tween.onComplete = () => { Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg()); };
+                lastSequence.AppendInterval(0.5f).Append(tween);
+
                 break;
             case State.SeeSawLandingFail:
                 break;
@@ -182,14 +197,22 @@ public partial class MyCharacter : MonoBehaviour
             case State.RocketJumping:
                 break;
             case State.DonwfallWait:
+                stateEnterCoroutine = StartCoroutine(DownfallWaitCoroutine());
                 break;
             case State.Downfall:
+                Message.AddListener<MoveLastFingerPositionMsg>(OnMoveLastFingerPositionMsg);
                 break;
             case State.Selecting:
                 break;
             default:
                 break;
         }
+    }
+
+    IEnumerator DownfallWaitCoroutine()
+    {
+        yield return new WaitForSeconds(1f);
+        ChangeState(State.Downfall);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -200,5 +223,26 @@ public partial class MyCharacter : MonoBehaviour
     void OnResponseSeeSawPositionMsg(ResponseSeeSawPositionMsg msg)
     {
         targetSeeSawSocket = side == CharacterManager.CharacterSide.Left ? msg.leftSocket : msg.rightSocket;
+    }
+
+    void OnMoveLastFingerPositionMsg(MoveLastFingerPositionMsg msg)
+    {
+        if (state == State.Downfall)
+        {
+            //ControlType == MovePosition.
+            if (true)
+            {
+                Vector3 worldPosition = Camera.main.ViewportToWorldPoint(msg.viewportPosition);
+
+                //타겟 지점과 거리가 일정 이상일때.
+                if (Mathf.Abs(transform.position.x - worldPosition.x) > 0.01f)
+                {//이동방향 설정.
+                    controlDirection = transform.position.x < worldPosition.x ? 1f : -1f;
+                }
+            }
+            else
+            {
+            }
+        }
     }
 }

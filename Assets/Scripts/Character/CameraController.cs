@@ -80,12 +80,10 @@ public class CameraController : MonoBehaviour
                 proCamera.MoveCameraInstantlyToPosition(new Vector2(0f, 0f));
                 break;
             case State.Rocket:
-                proCamera.FollowHorizontal = true;
                 proCamera.FollowVertical = true;
                 proCamera.CenterOnTargets();
                 break;
             case State.Downfall:
-                proCamera.FollowHorizontal = true;
                 proCamera.FollowVertical = true;
                 break;
         }

@@ -11,13 +11,6 @@ public class StartButtonClickMsg : VoidMessageBase
         Message.Send(this);
     }
 }
-public class JumpButtonClickMsg : VoidMessageBase
-{
-    public override void Send()
-    {
-        Message.Send(this);
-    }
-}
 
 public class RetryButtonClickMsg : VoidMessageBase
 {

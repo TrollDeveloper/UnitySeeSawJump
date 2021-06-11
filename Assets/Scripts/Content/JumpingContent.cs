@@ -16,7 +16,6 @@ public class JumpingContent : InGameContentBase
         //Msg AddListener.
         Message.AddListener<CharacterJumpingCompleteMsg>(OnCharacterJumpingCompleteMsg);
         Message.AddListener<CharacterLandingCompleteMsg>(OnCharacterLandingCompleteMsg);
-        Message.AddListener<JumpButtonClickMsg>(OnJumpButtonClickMsg);
 
         StartCoroutine(JumpingStartCoroutine());
     }
@@ -28,7 +27,9 @@ public class JumpingContent : InGameContentBase
         //Msg RemoveListener.
         MessageHelper.RemoveListenerEndFrame<CharacterJumpingCompleteMsg>(OnCharacterJumpingCompleteMsg);
         MessageHelper.RemoveListenerEndFrame<CharacterLandingCompleteMsg>(OnCharacterLandingCompleteMsg);
-        MessageHelper.RemoveListenerEndFrame<JumpButtonClickMsg>(OnJumpButtonClickMsg);
+        MessageHelper.RemoveListenerEndFrame<TouchDownMsg>(OnTouchDownMsg);
+
+        StopAllCoroutines();
     }
 
     private void Update()
@@ -44,6 +45,7 @@ public class JumpingContent : InGameContentBase
 
         yield return new WaitForSeconds(1f);
         //Jumping UI ON
+        Message.AddListener<TouchDownMsg>(OnTouchDownMsg);
 
     }
 
@@ -54,19 +56,25 @@ public class JumpingContent : InGameContentBase
         yield return new WaitForSeconds(1f);
         Message.Send(new GameStateChangeMsg(GameStateManager.State.Rocket));
     }
-    void OnJumpButtonClickMsg(JumpButtonClickMsg msg)
+
+    void OnTouchDownMsg(TouchDownMsg msg)
+    {
+        OnLandingAction();
+    }
+
+    void OnLandingAction()
     {
         //Hide Jump UI.
         //Calculate Score.
 
         //Set Character Landing.
-        Message.Send(new CharacterChangeStateMsg(MyCharacter.State.SeeSawLanding));
+        Message.Send(new CharacterChangeStateMsg(MyCharacter.State.SeeSawLanding, true));
     }
 
     void OnCharacterLandingCompleteMsg(CharacterLandingCompleteMsg msg)
     {
         //if Score is low then Change state GameEnd.
-        if (true)
+        if (false)
         {
             Message.Send(new GameStateChangeMsg(GameStateManager.State.GameEnd));
         }

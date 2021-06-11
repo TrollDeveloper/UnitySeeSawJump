@@ -13,10 +13,10 @@ public class TouchDownMsg : Message
         this.viewportPosition = viewportPosition;
     }
 }
-public class LastFingerPositionMsg : Message
+public class MoveLastFingerPositionMsg : Message
 {
     public Vector2 viewportPosition;
-    public LastFingerPositionMsg(Vector2 viewportPosition)
+    public MoveLastFingerPositionMsg(Vector2 viewportPosition)
     {
         this.viewportPosition = viewportPosition;
     }
@@ -53,7 +53,7 @@ public class InputManager : MonoBehaviour
         }
         if (Input.GetMouseButton(0))
         {
-            Message.Send(new LastFingerPositionMsg(new Vector2(Input.mousePosition.x * invScreenWidth, Input.mousePosition.y * invScreenHeight)));
+            Message.Send(new MoveLastFingerPositionMsg(new Vector2(Input.mousePosition.x * invScreenWidth, Input.mousePosition.y * invScreenHeight)));
         }
 #endif
         for (int i = 0; i < Input.touchCount; i++)
@@ -74,7 +74,7 @@ public class InputManager : MonoBehaviour
             }
             else if (fingerIDList.Count != 0 && touch.fingerId == fingerIDList[fingerIDList.Count - 1])
             {// 현재 터치가 마지막 터치면 터치 로직 처리.
-                Message.Send(new LastFingerPositionMsg(new Vector2(touch.position.x * invScreenWidth, touch.position.y * invScreenHeight)));
+                Message.Send(new MoveLastFingerPositionMsg(new Vector2(touch.position.x * invScreenWidth, touch.position.y * invScreenHeight)));
             }
         }
     }
