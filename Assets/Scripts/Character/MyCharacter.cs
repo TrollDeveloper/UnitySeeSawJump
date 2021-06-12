@@ -77,10 +77,10 @@ public partial class MyCharacter : MonoBehaviour
         switch (state)
         {
             case State.RocketJumping:
-                transform.position += Vector3.up * Time.deltaTime * 15f;
+                transform.position += Vector3.up * Time.deltaTime * 30f;
                 if (transform.position.y > 50f)
                 {
-                    Message.Send<GameStateChangeMsg>(new GameStateChangeMsg(GameStateManager.State.Downfall));
+                    Message.Send(new GameStateChangeMsg(GameStateManager.State.Downfall));
                 }
                 break;
             case State.Downfall:
@@ -89,7 +89,7 @@ public partial class MyCharacter : MonoBehaviour
 
                 if (transform.position.y < 15f)
                 {
-                    Message.Send<CharacterDownfallCompleteMsg>(new CharacterDownfallCompleteMsg());
+                    Message.Send(new CharacterDownfallCompleteMsg());
                 }
                 break;
         }
@@ -195,6 +195,7 @@ public partial class MyCharacter : MonoBehaviour
                 transform.localPosition = Vector3.zero;
                 break;
             case State.RocketJumping:
+                transform.position = new Vector3(transform.position.x, 15f, transform.position.z);
                 break;
             case State.DonwfallWait:
                 stateEnterCoroutine = StartCoroutine(DownfallWaitCoroutine());

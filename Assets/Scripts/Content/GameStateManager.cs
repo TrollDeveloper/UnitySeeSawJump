@@ -14,6 +14,7 @@ public class GameStateChangeMsg : Message
 
 public class GameStateManager : MonoBehaviour
 {
+    [System.Serializable]
     public enum State
     {
         Lobby,

@@ -13,6 +13,7 @@ public class LobbyContent : InGameContentBase
         //Set Camera SeeSaw Position.
         Message.Send(new CameraStateChangeMsg(CameraController.State.SeeSaw));
         //Turn On Lobby UI. 
+        Message.Send(new RequestGameStateDialogEnterMsg(GameStateManager.State.Lobby));
 
         Message.AddListener<StartButtonClickMsg>(OnStartButtonClickMsg);
     }
@@ -21,6 +22,8 @@ public class LobbyContent : InGameContentBase
     {
         base.Exit();
         //Turn Off Lobby UI.
+        Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.Lobby));
+
         MessageHelper.RemoveListenerEndFrame<StartButtonClickMsg>(OnStartButtonClickMsg);
     }
 
