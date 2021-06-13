@@ -59,6 +59,8 @@ public partial class MyCharacter : MonoBehaviour
 
     float controlDirection = 0f;
 
+    GameContentModel contentModel;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -68,7 +70,7 @@ public partial class MyCharacter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        contentModel = Model.First<GameContentModel>();
     }
 
     // Update is called once per frame
@@ -78,7 +80,10 @@ public partial class MyCharacter : MonoBehaviour
         {
             case State.RocketJumping:
                 transform.position += Vector3.up * Time.deltaTime * 30f;
-                if (transform.position.y > 50f)
+
+                contentModel.characterHeight = transform.position.y;
+
+                if (transform.position.y > contentModel.targetHeight)
                 {
                     Message.Send(new GameStateChangeMsg(GameStateManager.State.Downfall));
                 }
@@ -86,6 +91,8 @@ public partial class MyCharacter : MonoBehaviour
             case State.Downfall:
                 transform.position -= Vector3.up * Time.deltaTime * 10f;
                 transform.position += controlDirection * Vector3.right * 5f * Time.deltaTime;
+
+                contentModel.characterHeight = transform.position.y;
 
                 if (transform.position.y < 15f)
                 {
@@ -105,12 +112,15 @@ public partial class MyCharacter : MonoBehaviour
         }
         gameObject.SetActive(true);
 
+        //이전에 걸어둔 DoTween 있으면 제거.
         if (lastSequence != null)
         {
             lastSequence.Kill();
             lastSequence = null;
         }
         transform.DOKill();
+
+        //이전에 걸어둔 코루틴 있으면 정지.
         if (stateEnterCoroutine != null)
         {
             StopCoroutine(stateEnterCoroutine);

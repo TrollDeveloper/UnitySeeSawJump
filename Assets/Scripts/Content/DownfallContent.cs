@@ -38,7 +38,7 @@ public class DownfallContent : InGameContentBase
 
     void OnCharacterDownfallCompleteMsg(CharacterDownfallCompleteMsg msg)
     {
-        Message.RemoveListener<CharacterDownfallCompleteMsg>(OnCharacterDownfallCompleteMsg);
+        MessageHelper.RemoveListenerEndFrame<CharacterDownfallCompleteMsg>(OnCharacterDownfallCompleteMsg);
         StartCoroutine(DownfallEndCoroutine());
     }
 
