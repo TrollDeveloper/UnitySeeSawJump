@@ -25,6 +25,7 @@ public class DownfallContent : InGameContentBase
         //Background Display Turn Off.
         //Control UI Off.
 
+        Message.Send(new CleanUpAllItemMsg());
         MessageHelper.RemoveListenerEndFrame<CharacterDownfallCompleteMsg>(OnCharacterDownfallCompleteMsg);
     }
 

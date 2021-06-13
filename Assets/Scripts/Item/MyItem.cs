@@ -1,18 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CodeControl;
+
+public class CleanUpAllItemMsg : Message
+{
+
+}
 
 public class MyItem : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private void OnEnable()
     {
-        
+        Message.AddListener<CleanUpAllItemMsg>(OnCleanUpAllItemMsg);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        
+        MessageHelper.RemoveListenerEndFrame<CleanUpAllItemMsg>(OnCleanUpAllItemMsg);
+    }
+
+    void OnCleanUpAllItemMsg(CleanUpAllItemMsg msg)
+    {
+        gameObject.SetActive(false);
+    }
+
+    public virtual void OnHit()
+    {
+        gameObject.SetActive(false);
     }
 }

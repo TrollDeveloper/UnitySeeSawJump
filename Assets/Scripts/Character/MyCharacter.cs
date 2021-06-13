@@ -205,7 +205,7 @@ public partial class MyCharacter : MonoBehaviour
                 transform.localPosition = Vector3.zero;
                 break;
             case State.RocketJumping:
-                transform.position = new Vector3(transform.position.x, 15f, transform.position.z);
+                transform.position = new Vector3(0f, 15f, transform.position.z);
                 break;
             case State.DonwfallWait:
                 stateEnterCoroutine = StartCoroutine(DownfallWaitCoroutine());
@@ -228,7 +228,11 @@ public partial class MyCharacter : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
+        if (state == State.Downfall && other.CompareTag("Item"))
+        {
+            var item = other.GetComponent<MyItem>();
+            item?.OnHit();
+        }
     }
 
     void OnResponseSeeSawPositionMsg(ResponseSeeSawPositionMsg msg)

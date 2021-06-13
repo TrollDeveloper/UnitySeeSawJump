@@ -9,6 +9,8 @@ public class RocketContent : InGameContentBase
     {
         base.Enter();
         //Item Info Generate.
+        Message.Send(new GenerateItemMsg());
+
         //Background Display ON.
         //Character Rocket Start.
         Message.Send(new CharacterChangeStateFromGameStateMsg(GameStateManager.State.Rocket));
