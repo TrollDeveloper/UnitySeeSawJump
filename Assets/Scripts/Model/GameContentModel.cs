@@ -7,6 +7,8 @@ public class GameContentModel : Model
     public float targetHeight;
     public float characterHeight;
     public float energy;
+    public int getItem;
+    public int totalItem;
 
     public void Init()
     {
@@ -15,6 +17,8 @@ public class GameContentModel : Model
 
     public void Reset()
     {
-
+        getItem = 0;
+        totalItem = 0;
+        energy = 0;
     }
 }

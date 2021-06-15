@@ -9,9 +9,14 @@ public class JumpingContent : InGameContentBase
     const int MaxJumpCount = 5;
     float jumpGage = 0f;
 
+    float currentPower = 0f;
+
+    bool isTouchDown = false;
+
     public override void Enter()
     {
         base.Enter();
+        isTouchDown = false;
         //Character Position.
         Message.Send(new CharacterChangeStateFromGameStateMsg(GameStateManager.State.Jumping));
         //Set Camera Lobby Mode.
@@ -98,20 +103,39 @@ public class JumpingContent : InGameContentBase
 
     void OnLandingAction()
     {
+        if (isTouchDown) { return; }
+        isTouchDown = true;
         StopCoroutine("JumpGageUpdateCoroutine");
         //Hide Jump UI.
         Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.Jumping));
 
         //Calculate Score.
+        var contentModel = Model.First<GameContentModel>();
+        currentPower = (float)contentModel.getItem / contentModel.totalItem;
+
+        if (jumpGage > 0.8f && jumpGage < 0.9f)
+        {
+            currentPower *= 1.2f;
+        }
+        else if (jumpGage > 0.6f && jumpGage <= 1f)
+        {
+            currentPower *= 1.0f;
+        }
+        else
+        {
+            currentPower *= 0.6f;
+        }
+
+        DebugLog.Log("GetItem : " + contentModel.getItem + " / totalItem : " + contentModel.totalItem);
 
         //Set Character Landing.
-        Message.Send(new CharacterChangeStateMsg(MyCharacter.State.SeeSawLanding, true));
+        Message.Send(new CharacterChangeStateMsg(currentPower >= 0.8f ? MyCharacter.State.SeeSawLanding : MyCharacter.State.SeeSawLandingFail, true));
     }
 
     void OnCharacterLandingCompleteMsg(CharacterLandingCompleteMsg msg)
     {
         //if Score is low then Change state GameEnd.
-        if (jumpGage < 0.6f)
+        if (currentPower < 0.8f)
         {
             Message.Send(new GameStateChangeMsg(GameStateManager.State.GameEnd));
         }

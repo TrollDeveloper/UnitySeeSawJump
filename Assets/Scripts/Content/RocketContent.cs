@@ -9,7 +9,9 @@ public class RocketContent : InGameContentBase
     {
         base.Enter();
         //Item Info Generate.
+        Model.First<GameContentModel>().Reset();
         Message.Send(new GenerateItemMsg());
+        DebugLog.Log(Model.First<GameContentModel>().totalItem);
 
         //Background Display ON.
         //Character Rocket Start.

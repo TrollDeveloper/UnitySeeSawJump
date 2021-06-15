@@ -33,10 +33,27 @@ public class ItemManager : MonoBehaviour
         GameContentModel model = Model.First<GameContentModel>();
         float targetHeight = model.targetHeight;
 
-        for (float y = 15f; y < targetHeight - 5f; y += 1f)
+        int itemCount = 0;
+        float x = Random.Range(-4f, 4f);
+        for (float y = 15f; y < targetHeight - 5f; y += 1.5f)
         {
             var newItem = ObjectPoolManager.Instance.SpawnObject(PrefabManager.Instance.GetPrefab(200));
-            newItem.transform.position = new Vector3(Random.Range(-4f, 4f), y, 0f);
+
+            x += Random.Range(-1f, 1f);
+            if (x > 4f)
+            {
+                x -= 1f;
+            }
+            else if (x < -4f)
+            {
+                x += 1f;
+            }
+
+            newItem.transform.position = new Vector3(x, y, 0f);
+            itemCount++;
         }
+
+        model.totalItem = itemCount;
+        DebugLog.Log(model.totalItem);
     }
 }

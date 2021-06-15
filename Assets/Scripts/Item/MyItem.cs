@@ -28,5 +28,6 @@ public class MyItem : MonoBehaviour
     public virtual void OnHit()
     {
         gameObject.SetActive(false);
+        Model.First<GameContentModel>().getItem++;
     }
 }

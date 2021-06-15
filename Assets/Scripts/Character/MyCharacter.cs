@@ -199,6 +199,10 @@ public partial class MyCharacter : MonoBehaviour
 
                 break;
             case State.SeeSawLandingFail:
+                transform.position = new Vector3(side == CharacterManager.CharacterSide.Left ? -3f : 3f, transform.position.y, transform.position.z);
+                tween = transform.DOMove(targetSeeSawSocket.position, 0.5f);
+                tween.onComplete = () => { Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg()); };
+                lastSequence.AppendInterval(0.5f).Append(tween);
                 break;
             case State.SeeSawLandingComplete:
                 transform.parent = targetSeeSawSocket;
