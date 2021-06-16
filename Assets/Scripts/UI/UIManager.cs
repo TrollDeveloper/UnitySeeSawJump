@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 using CodeControl;
+using EasyMobile.Demo;
 
 public class RequestGameStateDialogEnterMsg : Message
 {
@@ -26,13 +27,19 @@ public class RequestGameStateDialogExitMsg : Message
 public class UIManager : SerializedMonoBehaviour
 {
     [OdinSerialize]
-    Dictionary<GameStateManager.State, GameObject> uiPanelMap = new Dictionary<GameStateManager.State, GameObject>();
+    Dictionary<GameStateManager.State, List<GameObject>> uiPanelMap =
+        new Dictionary<GameStateManager.State, List<GameObject>>();
 
     private void Awake()
     {
         foreach (var keyValue in uiPanelMap)
         {
-            keyValue.Value.SetActive(false);
+            var list = keyValue.Value;
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i].SetActive(false);
+            }
+
         }
 
         Message.AddListener<RequestGameStateDialogEnterMsg>(OnRequestGameStateDialogEnterMsg);
@@ -49,6 +56,7 @@ public class UIManager : SerializedMonoBehaviour
     {
         SetActiveUI(msg.state, true);
     }
+
     void OnRequestGameStateDialogExitMsg(RequestGameStateDialogExitMsg msg)
     {
         SetActiveUI(msg.state, false);
@@ -58,7 +66,11 @@ public class UIManager : SerializedMonoBehaviour
     {
         if (uiPanelMap.ContainsKey(state))
         {
-            uiPanelMap[state].SetActive(isActive);
+            var list = uiPanelMap[state];
+            for (int i = 0; i < list.Count; i++)
+            {
+                list[i].SetActive(isActive);
+            }
         }
     }
 }

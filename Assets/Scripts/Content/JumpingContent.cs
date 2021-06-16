@@ -126,8 +126,6 @@ public class JumpingContent : InGameContentBase
             currentPower *= 0.6f;
         }
 
-        DebugLog.Log("GetItem : " + contentModel.getItem + " / totalItem : " + contentModel.totalItem);
-
         //Set Character Landing.
         Message.Send(new CharacterChangeStateMsg(currentPower >= 0.8f ? MyCharacter.State.SeeSawLanding : MyCharacter.State.SeeSawLandingFail, true));
     }
@@ -141,6 +139,8 @@ public class JumpingContent : InGameContentBase
         }
         else
         {
+            var contentModel = Model.First<GameContentModel>();
+            contentModel.targetHeight += 10f;
             //else ChangeCharacter and Jumping.
             Message.Send(new CharacterJumpingSwapMsg());
         }

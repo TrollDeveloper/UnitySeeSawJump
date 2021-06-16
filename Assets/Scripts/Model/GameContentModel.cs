@@ -13,6 +13,7 @@ public class GameContentModel : Model
     public void Init()
     {
         targetHeight = 50f;
+        Reset();
     }
 
     public void Reset()

@@ -54,6 +54,5 @@ public class ItemManager : MonoBehaviour
         }
 
         model.totalItem = itemCount;
-        DebugLog.Log(model.totalItem);
     }
 }

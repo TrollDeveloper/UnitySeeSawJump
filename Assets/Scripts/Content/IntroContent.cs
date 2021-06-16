@@ -9,6 +9,7 @@ public class IntroContent : InGameContentBase
     {
         base.Enter();
         //Reset Data.
+        Model.First<GameContentModel>().Init();
 
         //Character Set.
         Message.Send(new CharacterChangeStateFromGameStateMsg(GameStateManager.State.Intro));

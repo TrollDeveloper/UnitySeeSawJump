@@ -11,7 +11,6 @@ public class RocketContent : InGameContentBase
         //Item Info Generate.
         Model.First<GameContentModel>().Reset();
         Message.Send(new GenerateItemMsg());
-        DebugLog.Log(Model.First<GameContentModel>().totalItem);
 
         //Background Display ON.
         //Character Rocket Start.
@@ -21,6 +20,7 @@ public class RocketContent : InGameContentBase
         //Set Camera State.
         Message.Send(new CameraStateChangeMsg(CameraController.State.Rocket));
         //Change UI.
+        Message.Send(new RequestGameStateDialogEnterMsg(GameStateManager.State.Rocket));
 
         Message.AddListener<CharacterRocketCompleteMsg>(OnCharacterRocketCompleteMsg);
     }
@@ -28,6 +28,7 @@ public class RocketContent : InGameContentBase
     {
         base.Exit();
         MessageHelper.RemoveListenerEndFrame<CharacterRocketCompleteMsg>(OnCharacterRocketCompleteMsg);
+        Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.Rocket));
     }
 
     private void Update()
