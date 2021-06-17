@@ -8,19 +8,23 @@ using UnityEngine.EventSystems;
 public class TouchDownMsg : Message
 {
     public Vector2 viewportPosition;
+
     public TouchDownMsg(Vector2 viewportPosition)
     {
         this.viewportPosition = viewportPosition;
     }
 }
+
 public class MoveLastFingerPositionMsg : Message
 {
     public Vector2 viewportPosition;
+
     public MoveLastFingerPositionMsg(Vector2 viewportPosition)
     {
         this.viewportPosition = viewportPosition;
     }
 }
+
 public class InputManager : MonoBehaviour
 {
     List<int> fingerIDList = new List<int>();
@@ -37,6 +41,7 @@ public class InputManager : MonoBehaviour
     {
         TouchInput();
     }
+
     void TouchInput()
     {
         float invScreenWidth = 1f / Screen.width;
@@ -48,12 +53,15 @@ public class InputManager : MonoBehaviour
         {
             if (IsPointOverUI(Input.mousePosition) == false)
             {
-                Message.Send(new TouchDownMsg(new Vector2(Input.mousePosition.x * invScreenWidth, Input.mousePosition.y * invScreenHeight)));
+                Message.Send(new TouchDownMsg(new Vector2(Input.mousePosition.x * invScreenWidth,
+                    Input.mousePosition.y * invScreenHeight)));
             }
         }
+
         if (Input.GetMouseButton(0))
         {
-            Message.Send(new MoveLastFingerPositionMsg(new Vector2(Input.mousePosition.x * invScreenWidth, Input.mousePosition.y * invScreenHeight)));
+            Message.Send(new MoveLastFingerPositionMsg(new Vector2(Input.mousePosition.x * invScreenWidth,
+                Input.mousePosition.y * invScreenHeight)));
         }
 #endif
         for (int i = 0; i < Input.touchCount; i++)
@@ -65,7 +73,8 @@ public class InputManager : MonoBehaviour
                 if (IsPointOverUI(touch.position) == false)
                 {
                     fingerIDList.Add(touch.fingerId);
-                    Message.Send(new TouchDownMsg(new Vector2(touch.position.x * invScreenWidth, touch.position.y * invScreenHeight)));
+                    Message.Send(new TouchDownMsg(new Vector2(touch.position.x * invScreenWidth,
+                        touch.position.y * invScreenHeight)));
                 }
             }
             else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
@@ -73,8 +82,10 @@ public class InputManager : MonoBehaviour
                 fingerIDList.Remove(touch.fingerId);
             }
             else if (fingerIDList.Count != 0 && touch.fingerId == fingerIDList[fingerIDList.Count - 1])
-            {// 현재 터치가 마지막 터치면 터치 로직 처리.
-                Message.Send(new MoveLastFingerPositionMsg(new Vector2(touch.position.x * invScreenWidth, touch.position.y * invScreenHeight)));
+            {
+                // 현재 터치가 마지막 터치면 터치 로직 처리.
+                Message.Send(new MoveLastFingerPositionMsg(new Vector2(touch.position.x * invScreenWidth,
+                    touch.position.y * invScreenHeight)));
             }
         }
     }
@@ -93,6 +104,7 @@ public class InputManager : MonoBehaviour
                 return true;
             }
         }
+
         return false;
     }
 }

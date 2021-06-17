@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
 using Com.LuisPedroFonseca.ProCamera2D;
+using DG.Tweening;
 
 public class CameraStateChangeMsg : Message
 {
@@ -39,17 +40,21 @@ public class CameraController : MonoBehaviour
         Rocket,
         Downfall,
     }
-    State state;
+    private State state;
 
-    MyCharacter targetCharacter;
-    ProCamera2DTransitionsFX camTransition;
-    ProCamera2D proCamera;
+    private MyCharacter targetCharacter;
+    private ProCamera2DTransitionsFX camTransition;
+    private ProCamera2D proCamera;
+    private ProCamera2DNumericBoundaries boundaries;
+    private Tweener offsetTweener;
 
     // Start is called before the first frame update
     void Awake()
     {
         proCamera = GetComponent<ProCamera2D>();
         camTransition = GetComponent<ProCamera2DTransitionsFX>();
+        boundaries = GetComponent<ProCamera2DNumericBoundaries>();
+        boundaries.enabled = false;
 
         Message.AddListener<CameraStateChangeMsg>(OnCameraChangeStateMsg);
         Message.AddListener<CameraFadeInMsg>(OnCameraFadeInMsg);
@@ -71,6 +76,15 @@ public class CameraController : MonoBehaviour
 
     public void ChangeState(State newState)
     {
+        switch (state)
+        {
+            case State.Downfall:
+                offsetTweener?.Kill();
+                offsetTweener = null;
+                boundaries.enabled = false;
+                proCamera.OffsetY = 0f;
+                break;
+        }
         state = newState;
         switch (newState)
         {
@@ -82,9 +96,12 @@ public class CameraController : MonoBehaviour
             case State.Rocket:
                 proCamera.FollowVertical = true;
                 proCamera.CenterOnTargets();
+                proCamera.OffsetY = 0f;
                 break;
             case State.Downfall:
                 proCamera.FollowVertical = true;
+                boundaries.enabled = true;
+                offsetTweener = DOTween.To(x => proCamera.OffsetY = x, 0f, -0.8f, 1f).SetEase(Ease.Linear).SetDelay(1f);
                 break;
         }
     }
@@ -98,7 +115,6 @@ public class CameraController : MonoBehaviour
         proCamera.AddCameraTarget(newTargetCharacter.transform);
         targetCharacter = newTargetCharacter;
     }
-
     void OnCameraChangeStateMsg(CameraStateChangeMsg msg)
     {
         ChangeState(msg.state);

@@ -30,6 +30,7 @@ public class IntroContent : InGameContentBase
 
         StopAllCoroutines();
     }
+
     void OnCharacterLandingCompleteMsg(CharacterLandingCompleteMsg msg)
     {
         Message.Send(new CharacterJumpingSwapMsg());
@@ -39,6 +40,7 @@ public class IntroContent : InGameContentBase
     {
         StartCoroutine(ChangeStateCoroutine());
     }
+
     IEnumerator ChangeStateCoroutine()
     {
         //FadeOut.

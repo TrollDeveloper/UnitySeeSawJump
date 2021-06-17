@@ -212,7 +212,6 @@ public partial class MyCharacter : MonoBehaviour
                 transform.position = new Vector3(0f, 15f, transform.position.z);
                 break;
             case State.DonwfallWait:
-                stateEnterCoroutine = StartCoroutine(DownfallWaitCoroutine());
                 break;
             case State.Downfall:
                 Message.AddListener<MoveLastFingerPositionMsg>(OnMoveLastFingerPositionMsg);
@@ -222,12 +221,6 @@ public partial class MyCharacter : MonoBehaviour
             default:
                 break;
         }
-    }
-
-    IEnumerator DownfallWaitCoroutine()
-    {
-        yield return new WaitForSeconds(1f);
-        ChangeState(State.Downfall);
     }
 
     private void OnTriggerEnter(Collider other)
