@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
 using DG.Tweening;
+
 public class CharacterJumpingCompleteMsg : Message
 {
-
 }
+
 public class CharacterLandingCompleteMsg : Message
 {
-
 }
+
 public class CharacterRocketCompleteMsg : Message
 {
-
 }
+
 public class CharacterDownfallCompleteMsg : Message
 {
-
 }
+
 public partial class MyCharacter : MonoBehaviour
 {
     public enum State
@@ -37,9 +38,11 @@ public partial class MyCharacter : MonoBehaviour
         Downfall,
         Selecting,
     }
+
     State state = State.None;
 
     CharacterManager.CharacterSide side;
+
     public CharacterManager.CharacterSide Side
     {
         get { return side; }
@@ -57,7 +60,7 @@ public partial class MyCharacter : MonoBehaviour
     Sequence lastSequence;
     Coroutine stateEnterCoroutine = null;
 
-    float controlDirection = 0f;
+    float lastTouchPointX = -999f;
 
     GameContentModel contentModel;
 
@@ -80,28 +83,63 @@ public partial class MyCharacter : MonoBehaviour
         {
             case State.RocketJumping:
                 transform.position += Vector3.up * Time.deltaTime * 30f;
-
-                contentModel.characterHeight = transform.position.y;
-
                 if (transform.position.y > contentModel.targetHeight)
                 {
                     Message.Send(new GameStateChangeMsg(GameStateManager.State.Downfall));
                 }
+
                 break;
             case State.Downfall:
-                transform.position -= Vector3.up * Time.deltaTime * 10f;
-                transform.position += controlDirection * Vector3.right * 5f * Time.deltaTime;
-
-                contentModel.characterHeight = transform.position.y;
-
-                if (transform.position.y < 15f)
-                {
-                    Message.Send(new CharacterDownfallCompleteMsg());
-                }
+                DownfallUpdate();
                 break;
         }
 
-        controlDirection = 0f;
+        contentModel.characterHeight = transform.position.y;
+        lastTouchPointX = -999f;
+    }
+
+    void DownfallUpdate()
+    {
+        Vector3 position = transform.position;
+        
+        position -= Vector3.up * Time.deltaTime * 10f;
+        if (position.y < 15f)
+        {
+            Message.Send(new CharacterDownfallCompleteMsg());
+        }
+
+        transform.position = position;
+
+        if (lastTouchPointX == -999f)
+        {
+            return;
+        }
+
+        //ControlType == MovePosition.
+        float controlDirection = 0;
+        if (Model.First<GameSettingModel>().controlType == GameSettingModel.ControlType.TargetPoint)
+        {
+            Vector3 worldPosition = Camera.main.ViewportToWorldPoint(new Vector3(lastTouchPointX, 0.5f, 10f));
+
+            //미세한값 흔들림 방지. 현재프레임 이동값보다 차이값이 낮을 경우 타겟 지점으로 바로 이동.
+            if (Mathf.Abs(transform.position.x - worldPosition.x) > 5f * Time.deltaTime)
+            {
+                //타겟 지점과 거리가 일정 이상일때 이동방향 설정.      
+                controlDirection = transform.position.x - worldPosition.x < 0f ? 1f : -1f;
+            }
+            else
+            {
+                position.x = worldPosition.x;
+                transform.position = position;
+            }
+        }
+        else
+        {
+            controlDirection = (lastTouchPointX - 0.5f) * 2f;
+        }
+        position.x += controlDirection * 5f * Time.deltaTime;
+        position.x = Mathf.Clamp(position.x, -4.5f, 4.5f);
+        transform.position = position;
     }
 
     public void ChangeState(State newState)
@@ -110,6 +148,7 @@ public partial class MyCharacter : MonoBehaviour
         {
             Message.Send<RequestSeeSawPositionMsg>(new RequestSeeSawPositionMsg());
         }
+
         gameObject.SetActive(true);
 
         //이전에 걸어둔 DoTween 있으면 제거.
@@ -118,6 +157,7 @@ public partial class MyCharacter : MonoBehaviour
             lastSequence.Kill();
             lastSequence = null;
         }
+
         transform.DOKill();
 
         //이전에 걸어둔 코루틴 있으면 정지.
@@ -125,6 +165,7 @@ public partial class MyCharacter : MonoBehaviour
         {
             StopCoroutine(stateEnterCoroutine);
         }
+
         stateEnterCoroutine = null;
 
         switch (state)
@@ -174,10 +215,14 @@ public partial class MyCharacter : MonoBehaviour
                 transform.position = targetSeeSawSocket.position;
                 lastSequence = DOTween.Sequence();
 
-                lastSequence.Append(transform.DOMove(transform.position + Vector3.up * 3f, 1.5f).SetEase(Ease.OutCubic));
+                lastSequence.Append(transform.DOMove(transform.position + Vector3.up * 3f, 1.5f)
+                    .SetEase(Ease.OutCubic));
 
                 var tween = transform.DOMove(targetSeeSawSocket.position, 0.5f);
-                tween.onComplete = () => { Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg()); };
+                tween.onComplete = () =>
+                {
+                    Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg());
+                };
                 lastSequence.AppendInterval(0.5f).Append(tween);
 
                 break;
@@ -194,14 +239,21 @@ public partial class MyCharacter : MonoBehaviour
             case State.SeeSawLanding:
 
                 tween = transform.DOMove(targetSeeSawSocket.position, 0.5f);
-                tween.onComplete = () => { Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg()); };
+                tween.onComplete = () =>
+                {
+                    Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg());
+                };
                 lastSequence.AppendInterval(0.5f).Append(tween);
 
                 break;
             case State.SeeSawLandingFail:
-                transform.position = new Vector3(side == CharacterManager.CharacterSide.Left ? -3f : 3f, transform.position.y, transform.position.z);
+                transform.position = new Vector3(side == CharacterManager.CharacterSide.Left ? -3f : 3f,
+                    transform.position.y, transform.position.z);
                 tween = transform.DOMove(targetSeeSawSocket.position, 0.5f);
-                tween.onComplete = () => { Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg()); };
+                tween.onComplete = () =>
+                {
+                    Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg());
+                };
                 lastSequence.AppendInterval(0.5f).Append(tween);
                 break;
             case State.SeeSawLandingComplete:
@@ -241,20 +293,7 @@ public partial class MyCharacter : MonoBehaviour
     {
         if (state == State.Downfall)
         {
-            //ControlType == MovePosition.
-            if (true)
-            {
-                Vector3 worldPosition = Camera.main.ViewportToWorldPoint(msg.viewportPosition);
-
-                //타겟 지점과 거리가 일정 이상일때.
-                if (Mathf.Abs(transform.position.x - worldPosition.x) > 0.01f)
-                {//이동방향 설정.
-                    controlDirection = transform.position.x < worldPosition.x ? 1f : -1f;
-                }
-            }
-            else
-            {
-            }
+            lastTouchPointX = msg.viewportPosition.x;
         }
     }
 }
