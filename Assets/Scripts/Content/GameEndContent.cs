@@ -19,6 +19,7 @@ public class GameEndContent : InGameContentBase
     public override void Exit()
     {
         base.Exit();
+        StopAllCoroutines();
         //GameEnd UI Off.
         Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.GameEnd));
 

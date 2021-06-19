@@ -14,6 +14,7 @@ public class LobbyContent : InGameContentBase
         Message.Send(new CameraStateChangeMsg(CameraController.State.SeeSaw));
         //Turn On Lobby UI. 
         Message.Send(new RequestGameStateDialogEnterMsg(GameStateManager.State.Lobby));
+        Message.Send(new CleanUpAllItemMsg());
 
         Message.AddListener<StartButtonClickMsg>(OnStartButtonClickMsg);
     }
