@@ -4,7 +4,7 @@ using CodeControl;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HeightDialog : MonoBehaviour
+public class HeightDialog : DialogBase
 {
     private GameContentModel contentModel;
     [SerializeField] private Text text;

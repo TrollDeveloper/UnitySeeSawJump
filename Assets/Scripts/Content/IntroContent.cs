@@ -11,11 +11,13 @@ public class IntroContent : InGameContentBase
         //Reset Data.
         Model.First<GameContentModel>().Init();
         Message.Send(new CleanUpAllItemMsg());
-        
+
         //Character Set.
         Message.Send(new CharacterChangeStateFromGameStateMsg(GameStateManager.State.Intro));
         //Camera Set.
         Message.Send(new CameraStateChangeMsg(CameraController.State.SeeSaw));
+
+        UIManager.Instance.RequestDialogExit<PauseDialog>();
 
         //Msg AddListener.
         Message.AddListener<CharacterJumpingCompleteMsg>(OnCharacterJumpingCompleteMsg);

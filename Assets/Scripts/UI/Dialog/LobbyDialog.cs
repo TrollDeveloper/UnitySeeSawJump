@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Beebyte.Obfuscator;
 using UnityEngine;
 using CodeControl;
+using Ludiq.OdinSerializer;
 
+[SkipRename]
 public class SettingPopupCloseButtonClickMsg : VoidMessageBase
 {
     public override void Send()
@@ -12,9 +15,10 @@ public class SettingPopupCloseButtonClickMsg : VoidMessageBase
     }
 }
 
+[SkipRename]
 public class SettingChangeControlTypeButtonClickMsg : VoidMessageBase
 {
-    public GameSettingModel.ControlType type;
+    [OdinSerialize] public GameSettingModel.ControlType type;
 
     public override void Send()
     {
@@ -23,7 +27,7 @@ public class SettingChangeControlTypeButtonClickMsg : VoidMessageBase
 }
 
 
-public class LobbyDialog : MonoBehaviour
+public class LobbyDialog : DialogBase
 {
     public GameObject settingPopup;
 

@@ -20,21 +20,27 @@ public class RocketContent : InGameContentBase
         //Set Camera State.
         Message.Send(new CameraStateChangeMsg(CameraController.State.Rocket));
         //Change UI.
-        Message.Send(new RequestGameStateDialogEnterMsg(GameStateManager.State.Rocket));
+        UIManager.Instance.RequestDialogEnter<HeightDialog>();
+        UIManager.Instance.RequestDialogEnter<PauseDialog>();
+
 
         Message.AddListener<CharacterRocketCompleteMsg>(OnCharacterRocketCompleteMsg);
     }
+
     public override void Exit()
     {
         base.Exit();
         MessageHelper.RemoveListenerEndFrame<CharacterRocketCompleteMsg>(OnCharacterRocketCompleteMsg);
-        Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.Rocket));
     }
 
     private void Update()
     {
-        if (isActive == false) { return; }
+        if (isActive == false)
+        {
+            return;
+        }
     }
+
     void OnCharacterRocketCompleteMsg(CharacterRocketCompleteMsg msg)
     {
         //Change Game State -> Downfall.

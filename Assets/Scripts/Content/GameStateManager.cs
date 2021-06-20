@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Beebyte.Obfuscator;
 using UnityEngine;
 using CodeControl;
+using Sirenix.Serialization;
 
 public class GameStateChangeMsg : Message
 {
@@ -14,7 +17,7 @@ public class GameStateChangeMsg : Message
 
 public class GameStateManager : MonoBehaviour
 {
-    [System.Serializable]
+    [Serializable]
     public enum State
     {
         Lobby,

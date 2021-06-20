@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,71 +7,42 @@ using Sirenix.Serialization;
 using Sirenix.OdinInspector;
 using CodeControl;
 using EasyMobile.Demo;
+using JetBrains.Annotations;
 
-public class RequestGameStateDialogEnterMsg : Message
+public class UIManager : MonoBehaviourSingleton<UIManager>
 {
-    public GameStateManager.State state;
-    public RequestGameStateDialogEnterMsg(GameStateManager.State state)
-    {
-        this.state = state;
-    }
-}
-public class RequestGameStateDialogExitMsg : Message
-{
-    public GameStateManager.State state;
-    public RequestGameStateDialogExitMsg(GameStateManager.State state)
-    {
-        this.state = state;
-    }
-}
-
-public class UIManager : SerializedMonoBehaviour
-{
-    [OdinSerialize]
-    Dictionary<GameStateManager.State, List<GameObject>> uiPanelMap =
-        new Dictionary<GameStateManager.State, List<GameObject>>();
+    private Dictionary<Type, DialogBase> dialogMap = new Dictionary<Type, DialogBase>();
 
     private void Awake()
     {
-        foreach (var keyValue in uiPanelMap)
+        var dialogs = transform.GetComponentsInChildren<DialogBase>(true);
+        for (int i = 0; i < dialogs.Length; i++)
         {
-            var list = keyValue.Value;
-            for (int i = 0; i < list.Count; i++)
+            Type type = dialogs[i].GetType();
+            if (dialogMap.ContainsKey(type) == false)
             {
-                list[i].SetActive(false);
+                dialogMap.Add(type, dialogs[i]);
             }
-
         }
-
-        Message.AddListener<RequestGameStateDialogEnterMsg>(OnRequestGameStateDialogEnterMsg);
-        Message.AddListener<RequestGameStateDialogExitMsg>(OnRequestGameStateDialogExitMsg);
     }
 
-    private void OnDestroy()
+    public void RequestDialogEnter<T>() where T : DialogBase
     {
-        Message.RemoveListener<RequestGameStateDialogEnterMsg>(OnRequestGameStateDialogEnterMsg);
-        Message.RemoveListener<RequestGameStateDialogExitMsg>(OnRequestGameStateDialogExitMsg);
+        SetActiveUI<T>(true);
     }
 
-    void OnRequestGameStateDialogEnterMsg(RequestGameStateDialogEnterMsg msg)
+    public void RequestDialogExit<T>() where T : DialogBase
     {
-        SetActiveUI(msg.state, true);
+        SetActiveUI<T>(false);
     }
 
-    void OnRequestGameStateDialogExitMsg(RequestGameStateDialogExitMsg msg)
+    void SetActiveUI<T>(bool isActive) where T : DialogBase
     {
-        SetActiveUI(msg.state, false);
-    }
-
-    void SetActiveUI(GameStateManager.State state, bool isActive)
-    {
-        if (uiPanelMap.ContainsKey(state))
+        Type type = typeof(T);
+        if (dialogMap.ContainsKey(type))
         {
-            var list = uiPanelMap[state];
-            for (int i = 0; i < list.Count; i++)
-            {
-                list[i].SetActive(isActive);
-            }
+            var dialog = dialogMap[type];
+            dialog.gameObject.SetActive(isActive);
         }
     }
 }

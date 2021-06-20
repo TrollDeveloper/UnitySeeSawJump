@@ -13,7 +13,8 @@ public class DownfallContent : InGameContentBase
         //Camera State Change.
         Message.Send(new CameraStateChangeMsg(CameraController.State.Downfall));
 
-        Message.Send(new RequestGameStateDialogEnterMsg(GameStateManager.State.Downfall));
+        UIManager.Instance.RequestDialogEnter<HeightDialog>();
+
 
         Message.AddListener<CharacterDownfallCompleteMsg>(OnCharacterDownfallCompleteMsg);
 
@@ -29,7 +30,7 @@ public class DownfallContent : InGameContentBase
         StopAllCoroutines();
 
         //Control UI Off.
-        Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.Downfall));
+        UIManager.Instance.RequestDialogExit<HeightDialog>();
 
         Message.Send(new CleanUpAllItemMsg());
         MessageHelper.RemoveListenerEndFrame<CharacterDownfallCompleteMsg>(OnCharacterDownfallCompleteMsg);

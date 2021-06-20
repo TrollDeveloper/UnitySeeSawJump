@@ -9,24 +9,26 @@ public class GameEndContent : InGameContentBase
     {
         base.Enter();
         //GameEnd UI ON.
-        Message.Send(new RequestGameStateDialogEnterMsg(GameStateManager.State.GameEnd));
+        UIManager.Instance.RequestDialogEnter<GameEndDialog>();
+        UIManager.Instance.RequestDialogExit<PauseDialog>();
         //Retry Timer ON.
 
         Message.AddListener<RetryButtonClickMsg>(OnRetryButtonClickMsg);
         Message.AddListener<RestartButtonClickMsg>(OnRestartButtonClickMsg);
         Message.AddListener<GoBackLobbyButtonClickMsg>(OnGoBackLobbyButtonClickMsg);
     }
+
     public override void Exit()
     {
         base.Exit();
         StopAllCoroutines();
         //GameEnd UI Off.
-        Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.GameEnd));
-
+        UIManager.Instance.RequestDialogExit<GameEndDialog>();
         MessageHelper.RemoveListenerEndFrame<RetryButtonClickMsg>(OnRetryButtonClickMsg);
         MessageHelper.RemoveListenerEndFrame<RestartButtonClickMsg>(OnRestartButtonClickMsg);
         MessageHelper.RemoveListenerEndFrame<GoBackLobbyButtonClickMsg>(OnGoBackLobbyButtonClickMsg);
     }
+
     IEnumerator RetryCoroutine()
     {
         //Score Rollback.
@@ -36,9 +38,10 @@ public class GameEndContent : InGameContentBase
         yield return new WaitForSeconds(1f);
         Message.Send(new GameStateChangeMsg(GameStateManager.State.Rocket));
     }
+
     void OnRetryButtonClickMsg(RetryButtonClickMsg msg)
     {
-        Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.GameEnd));
+        UIManager.Instance.RequestDialogExit<GameEndDialog>();
         StartCoroutine(RetryCoroutine());
     }
 
@@ -47,6 +50,7 @@ public class GameEndContent : InGameContentBase
         //ChangeState to Intro.
         Message.Send(new GameStateChangeMsg(GameStateManager.State.Intro));
     }
+
     void OnGoBackLobbyButtonClickMsg(GoBackLobbyButtonClickMsg msg)
     {
         //ChangeState to Lobby.

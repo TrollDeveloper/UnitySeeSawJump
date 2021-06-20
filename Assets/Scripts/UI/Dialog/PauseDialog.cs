@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Beebyte.Obfuscator;
 using UnityEngine;
 using CodeControl;
-
+[SkipRename]
 public class PauseButtonClickMsg : VoidMessageBase
 {
     public override void Send()
@@ -11,7 +12,7 @@ public class PauseButtonClickMsg : VoidMessageBase
         Message.Send(this);
     }
 }
-
+[SkipRename]
 public class PauseResumeButtonClickMsg : VoidMessageBase
 {
     public override void Send()
@@ -19,7 +20,7 @@ public class PauseResumeButtonClickMsg : VoidMessageBase
         Message.Send(this);
     }
 }
-
+[SkipRename]
 public class PauseRestartButtonClickMsg : VoidMessageBase
 {
     public override void Send()
@@ -27,7 +28,7 @@ public class PauseRestartButtonClickMsg : VoidMessageBase
         Message.Send(this);
     }
 }
-
+[SkipRename]
 public class PauseLobbyButtonClickMsg : VoidMessageBase
 {
     public override void Send()
@@ -36,7 +37,7 @@ public class PauseLobbyButtonClickMsg : VoidMessageBase
     }
 }
 
-public class PauseDialog : MonoBehaviour
+public class PauseDialog : DialogBase
 {
     public GameObject pausePopup;
 

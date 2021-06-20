@@ -28,12 +28,13 @@ public class JumpingContent : InGameContentBase
 
         StartCoroutine(JumpingStartCoroutine());
     }
+
     public override void Exit()
     {
         base.Exit();
         //Jumping UI Off.
-        Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.Jumping));
-
+        UIManager.Instance.RequestDialogExit<JumpingDialog>();
+        
         //Msg RemoveListener.
         MessageHelper.RemoveListenerEndFrame<CharacterJumpingCompleteMsg>(OnCharacterJumpingCompleteMsg);
         MessageHelper.RemoveListenerEndFrame<CharacterLandingCompleteMsg>(OnCharacterLandingCompleteMsg);
@@ -44,8 +45,10 @@ public class JumpingContent : InGameContentBase
 
     private void Update()
     {
-        if (isActive == false) { return; }
-
+        if (isActive == false)
+        {
+            return;
+        }
     }
 
 
@@ -56,7 +59,8 @@ public class JumpingContent : InGameContentBase
 
         yield return new WaitForSeconds(1f);
         //Jumping UI ON
-        Message.Send(new RequestGameStateDialogEnterMsg(GameStateManager.State.Jumping));
+        UIManager.Instance.RequestDialogEnter<JumpingDialog>();
+        
         Message.AddListener<TouchDownMsg>(OnTouchDownMsg);
 
         StartCoroutine("JumpGageUpdateCoroutine");
@@ -93,6 +97,7 @@ public class JumpingContent : InGameContentBase
 
             text.text = (Mathf.Clamp01(jumpGage) * 100f).ToString("n00") + "%";
         }
+
         OnLandingAction();
     }
 
@@ -103,15 +108,19 @@ public class JumpingContent : InGameContentBase
 
     void OnLandingAction()
     {
-        if (isTouchDown) { return; }
+        if (isTouchDown)
+        {
+            return;
+        }
+
         isTouchDown = true;
         StopCoroutine("JumpGageUpdateCoroutine");
         //Hide Jump UI.
-        Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.Jumping));
+        UIManager.Instance.RequestDialogExit<JumpingDialog>();
 
         //Calculate Score.
         var contentModel = Model.First<GameContentModel>();
-        currentPower = (float)contentModel.getItem / contentModel.totalItem;
+        currentPower = (float) contentModel.getItem / contentModel.totalItem;
 
         if (jumpGage > 0.8f && jumpGage < 0.9f)
         {
@@ -127,7 +136,8 @@ public class JumpingContent : InGameContentBase
         }
 
         //Set Character Landing.
-        Message.Send(new CharacterChangeStateMsg(currentPower >= 0.8f ? MyCharacter.State.SeeSawLanding : MyCharacter.State.SeeSawLandingFail, true));
+        Message.Send(new CharacterChangeStateMsg(
+            currentPower >= 0.8f ? MyCharacter.State.SeeSawLanding : MyCharacter.State.SeeSawLandingFail, true));
     }
 
     void OnCharacterLandingCompleteMsg(CharacterLandingCompleteMsg msg)

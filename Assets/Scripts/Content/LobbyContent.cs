@@ -13,9 +13,13 @@ public class LobbyContent : InGameContentBase
         //Set Camera SeeSaw Position.
         Message.Send(new CameraStateChangeMsg(CameraController.State.SeeSaw));
         //Turn On Lobby UI. 
-        Message.Send(new RequestGameStateDialogEnterMsg(GameStateManager.State.Lobby));
+        UIManager.Instance.RequestDialogEnter<LobbyDialog>();
+        UIManager.Instance.RequestDialogExit<PauseDialog>();
+        UIManager.Instance.RequestDialogExit<HeightDialog>();
+
         Message.Send(new CleanUpAllItemMsg());
 
+        Message.AddListener<TouchDownMsg>(OnTouchDownMsg);
         Message.AddListener<StartButtonClickMsg>(OnStartButtonClickMsg);
     }
 
@@ -23,14 +27,25 @@ public class LobbyContent : InGameContentBase
     {
         base.Exit();
         //Turn Off Lobby UI.
-        Message.Send(new RequestGameStateDialogExitMsg(GameStateManager.State.Lobby));
+        UIManager.Instance.RequestDialogExit<LobbyDialog>();
 
+        MessageHelper.RemoveListenerEndFrame<TouchDownMsg>(OnTouchDownMsg);
         MessageHelper.RemoveListenerEndFrame<StartButtonClickMsg>(OnStartButtonClickMsg);
+    }
+
+    void GameStart()
+    {
+        //ChangeState To Intro.
+        Message.Send(new GameStateChangeMsg(GameStateManager.State.Intro));
+    }
+
+    void OnTouchDownMsg(TouchDownMsg msg)
+    {
+        GameStart();
     }
 
     void OnStartButtonClickMsg(StartButtonClickMsg msg)
     {
-        //ChangeState To Intro.
-        Message.Send(new GameStateChangeMsg(GameStateManager.State.Intro));
+        GameStart();
     }
 }
