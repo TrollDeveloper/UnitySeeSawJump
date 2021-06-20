@@ -3,31 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
 
-public class CleanUpAllItemMsg : Message
+namespace Item
 {
-
-}
-
-public class MyItem : MonoBehaviour
-{
-    private void OnEnable()
+    public class CleanUpAllItemMsg : Message
     {
-        Message.AddListener<CleanUpAllItemMsg>(OnCleanUpAllItemMsg);
     }
 
-    private void OnDisable()
+    public class MyItem : MonoBehaviour
     {
-        MessageHelper.RemoveListenerEndFrame<CleanUpAllItemMsg>(OnCleanUpAllItemMsg);
-    }
+        private void OnEnable()
+        {
+            Message.AddListener<CleanUpAllItemMsg>(OnCleanUpAllItemMsg);
+        }
 
-    void OnCleanUpAllItemMsg(CleanUpAllItemMsg msg)
-    {
-        gameObject.SetActive(false);
-    }
+        private void OnDisable()
+        {
+            MessageHelper.RemoveListenerEndFrame<CleanUpAllItemMsg>(OnCleanUpAllItemMsg);
+        }
 
-    public virtual void OnHit()
-    {
-        gameObject.SetActive(false);
-        Model.First<GameContentModel>().getItem++;
+        void OnCleanUpAllItemMsg(CleanUpAllItemMsg msg)
+        {
+            gameObject.SetActive(false);
+        }
+
+        public virtual void OnHit()
+        {
+            gameObject.SetActive(false);
+            Model.First<GameContentModel>().getItem++;
+        }
     }
 }

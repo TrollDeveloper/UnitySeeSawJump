@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogBase : MonoBehaviour
+namespace UI.Dialog
 {
+    public class DialogBase : MonoBehaviour
+    {
+    }
 }

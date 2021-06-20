@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
-
+using UI;
+using UI.Dialog;
 public class GameEndContent : InGameContentBase
 {
     public override void Enter()

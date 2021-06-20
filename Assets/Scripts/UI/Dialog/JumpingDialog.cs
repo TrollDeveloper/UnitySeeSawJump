@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JumpingDialog : DialogBase
+namespace UI.Dialog
 {
+    public class JumpingDialog : DialogBase
+    {
+    }
 }

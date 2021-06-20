@@ -4,10 +4,13 @@ using UnityEngine;
 using CodeControl;
 using Com.LuisPedroFonseca.ProCamera2D;
 using DG.Tweening;
+using Character;
+using Item;
 
 public class CameraStateChangeMsg : Message
 {
     public CameraController.State state;
+
     public CameraStateChangeMsg(CameraController.State newState)
     {
         state = newState;
@@ -20,6 +23,7 @@ public class CameraFadeInMsg : Message
     {
         this.duration = duration;
     }
+
     public float duration;
 }
 
@@ -29,6 +33,7 @@ public class CameraFadeOutMsg : Message
     {
         this.duration = duration;
     }
+
     public float duration;
 }
 
@@ -40,6 +45,7 @@ public class CameraController : MonoBehaviour
         Rocket,
         Downfall,
     }
+
     private State state;
 
     private MyCharacter targetCharacter;
@@ -65,8 +71,8 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
     }
+
     void OnDestroy()
     {
         MessageHelper.RemoveListenerEndFrame<CameraStateChangeMsg>(OnCameraChangeStateMsg);
@@ -85,6 +91,7 @@ public class CameraController : MonoBehaviour
                 proCamera.OffsetY = 0f;
                 break;
         }
+
         state = newState;
         switch (newState)
         {
@@ -112,24 +119,28 @@ public class CameraController : MonoBehaviour
         {
             proCamera.RemoveCameraTarget(targetCharacter.transform);
         }
+
         proCamera.AddCameraTarget(newTargetCharacter.transform);
         targetCharacter = newTargetCharacter;
     }
+
     void OnCameraChangeStateMsg(CameraStateChangeMsg msg)
     {
         ChangeState(msg.state);
     }
+
     void OnCameraFadeInMsg(CameraFadeInMsg msg)
     {
         camTransition.TransitionEnter();
     }
+
     void OnCameraFadeOutMsg(CameraFadeOutMsg msg)
     {
         camTransition.TransitionExit();
     }
+
     void OnCharacterSideChangedMsg(CharacterSideChangedMsg msg)
     {
         SetTargetCharacter(msg.myCharacter);
-
     }
 }

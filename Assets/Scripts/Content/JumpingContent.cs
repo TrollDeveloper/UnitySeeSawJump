@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using CodeControl;
+using Character;
+using UI;
+using UI.Dialog;
 
 public class JumpingContent : InGameContentBase
 {
@@ -34,7 +37,7 @@ public class JumpingContent : InGameContentBase
         base.Exit();
         //Jumping UI Off.
         UIManager.Instance.RequestDialogExit<JumpingDialog>();
-        
+
         //Msg RemoveListener.
         MessageHelper.RemoveListenerEndFrame<CharacterJumpingCompleteMsg>(OnCharacterJumpingCompleteMsg);
         MessageHelper.RemoveListenerEndFrame<CharacterLandingCompleteMsg>(OnCharacterLandingCompleteMsg);
@@ -60,7 +63,7 @@ public class JumpingContent : InGameContentBase
         yield return new WaitForSeconds(1f);
         //Jumping UI ON
         UIManager.Instance.RequestDialogEnter<JumpingDialog>();
-        
+
         Message.AddListener<TouchDownMsg>(OnTouchDownMsg);
 
         StartCoroutine("JumpGageUpdateCoroutine");

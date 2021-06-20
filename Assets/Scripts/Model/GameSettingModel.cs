@@ -19,6 +19,6 @@ public class GameSettingModel : Model
 
     public void Init()
     {
-        controlType = ControlType.Direction;
+        controlType = ControlType.TargetPoint;
     }
 }

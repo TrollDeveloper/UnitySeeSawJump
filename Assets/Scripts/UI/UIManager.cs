@@ -8,41 +8,45 @@ using Sirenix.OdinInspector;
 using CodeControl;
 using EasyMobile.Demo;
 using JetBrains.Annotations;
+using UI.Dialog;
 
-public class UIManager : MonoBehaviourSingleton<UIManager>
+namespace UI
 {
-    private Dictionary<Type, DialogBase> dialogMap = new Dictionary<Type, DialogBase>();
-
-    private void Awake()
+    public class UIManager : MonoBehaviourSingleton<UIManager>
     {
-        var dialogs = transform.GetComponentsInChildren<DialogBase>(true);
-        for (int i = 0; i < dialogs.Length; i++)
+        private Dictionary<Type, DialogBase> dialogMap = new Dictionary<Type, DialogBase>();
+
+        private void Awake()
         {
-            Type type = dialogs[i].GetType();
-            if (dialogMap.ContainsKey(type) == false)
+            var dialogs = transform.GetComponentsInChildren<DialogBase>(true);
+            for (int i = 0; i < dialogs.Length; i++)
             {
-                dialogMap.Add(type, dialogs[i]);
+                Type type = dialogs[i].GetType();
+                if (dialogMap.ContainsKey(type) == false)
+                {
+                    dialogMap.Add(type, dialogs[i]);
+                }
             }
         }
-    }
 
-    public void RequestDialogEnter<T>() where T : DialogBase
-    {
-        SetActiveUI<T>(true);
-    }
-
-    public void RequestDialogExit<T>() where T : DialogBase
-    {
-        SetActiveUI<T>(false);
-    }
-
-    void SetActiveUI<T>(bool isActive) where T : DialogBase
-    {
-        Type type = typeof(T);
-        if (dialogMap.ContainsKey(type))
+        public void RequestDialogEnter<T>() where T : DialogBase
         {
-            var dialog = dialogMap[type];
-            dialog.gameObject.SetActive(isActive);
+            SetActiveUI<T>(true);
+        }
+
+        public void RequestDialogExit<T>() where T : DialogBase
+        {
+            SetActiveUI<T>(false);
+        }
+
+        void SetActiveUI<T>(bool isActive) where T : DialogBase
+        {
+            Type type = typeof(T);
+            if (dialogMap.ContainsKey(type))
+            {
+                var dialog = dialogMap[type];
+                dialog.gameObject.SetActive(isActive);
+            }
         }
     }
 }

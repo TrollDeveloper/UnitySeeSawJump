@@ -3,56 +3,59 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
 
-public class GenerateItemMsg : Message
+namespace Item
 {
-
-}
-
-
-public class ItemManager : MonoBehaviour
-{
-    public List<MyItem> itemList;
-
-
-    private void Awake()
+    public class GenerateItemMsg : Message
     {
-        Message.AddListener<GenerateItemMsg>(OnGenerateItemMsg);
-    }
-    private void OnDestroy()
-    {
-        Message.RemoveListener<GenerateItemMsg>(OnGenerateItemMsg);
     }
 
-    void OnGenerateItemMsg(GenerateItemMsg msg)
-    {
-        GenerateItem();
-    }
 
-    void GenerateItem()
+    public class ItemManager : MonoBehaviour
     {
-        GameContentModel model = Model.First<GameContentModel>();
-        float targetHeight = model.targetHeight;
+        public List<MyItem> itemList;
 
-        int itemCount = 0;
-        float x = Random.Range(-4f, 4f);
-        for (float y = 15f; y < targetHeight - 5f; y += 1.5f)
+
+        private void Awake()
         {
-            var newItem = ObjectPoolManager.Instance.SpawnObject(PrefabManager.Instance.GetPrefab(200));
-
-            x += Random.Range(-1f, 1f);
-            if (x > 4f)
-            {
-                x -= 1f;
-            }
-            else if (x < -4f)
-            {
-                x += 1f;
-            }
-
-            newItem.transform.position = new Vector3(x, y, 0f);
-            itemCount++;
+            Message.AddListener<GenerateItemMsg>(OnGenerateItemMsg);
         }
 
-        model.totalItem = itemCount;
+        private void OnDestroy()
+        {
+            Message.RemoveListener<GenerateItemMsg>(OnGenerateItemMsg);
+        }
+
+        void OnGenerateItemMsg(GenerateItemMsg msg)
+        {
+            GenerateItem();
+        }
+
+        void GenerateItem()
+        {
+            GameContentModel model = Model.First<GameContentModel>();
+            float targetHeight = model.targetHeight;
+
+            int itemCount = 0;
+            float x = Random.Range(-4f, 4f);
+            for (float y = 15f; y < targetHeight - 5f; y += 1.5f)
+            {
+                var newItem = ObjectPoolManager.Instance.SpawnObject(PrefabManager.Instance.GetPrefab(200));
+
+                x += Random.Range(-1f, 1f);
+                if (x > 4f)
+                {
+                    x -= 1f;
+                }
+                else if (x < -4f)
+                {
+                    x += 1f;
+                }
+
+                newItem.transform.position = new Vector3(x, y, 0f);
+                itemCount++;
+            }
+
+            model.totalItem = itemCount;
+        }
     }
 }

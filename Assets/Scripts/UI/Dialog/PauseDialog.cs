@@ -4,80 +4,87 @@ using System.Collections.Generic;
 using Beebyte.Obfuscator;
 using UnityEngine;
 using CodeControl;
-[SkipRename]
-public class PauseButtonClickMsg : VoidMessageBase
+
+namespace UI.Dialog
 {
-    public override void Send()
+    [SkipRename]
+    public class PauseButtonClickMsg : VoidMessageBase
     {
-        Message.Send(this);
-    }
-}
-[SkipRename]
-public class PauseResumeButtonClickMsg : VoidMessageBase
-{
-    public override void Send()
-    {
-        Message.Send(this);
-    }
-}
-[SkipRename]
-public class PauseRestartButtonClickMsg : VoidMessageBase
-{
-    public override void Send()
-    {
-        Message.Send(this);
-    }
-}
-[SkipRename]
-public class PauseLobbyButtonClickMsg : VoidMessageBase
-{
-    public override void Send()
-    {
-        Message.Send(this);
-    }
-}
-
-public class PauseDialog : DialogBase
-{
-    public GameObject pausePopup;
-
-    private void OnEnable()
-    {
-        pausePopup.SetActive(false);
-        Message.AddListener<PauseButtonClickMsg>(OnPauseButtonClickMsg);
-        Message.AddListener<PauseResumeButtonClickMsg>(OnPauseResumeButtonClickMsg);
-        Message.AddListener<PauseRestartButtonClickMsg>(OnPauseRestartButtonClickMsg);
-        Message.AddListener<PauseLobbyButtonClickMsg>(OnPauseLobbyButtonClickMsg);
+        public override void Send()
+        {
+            Message.Send(this);
+        }
     }
 
-    private void OnDisable()
+    [SkipRename]
+    public class PauseResumeButtonClickMsg : VoidMessageBase
     {
-        MessageHelper.RemoveListenerEndFrame<PauseButtonClickMsg>(OnPauseButtonClickMsg);
-        MessageHelper.RemoveListenerEndFrame<PauseResumeButtonClickMsg>(OnPauseResumeButtonClickMsg);
-        MessageHelper.RemoveListenerEndFrame<PauseRestartButtonClickMsg>(OnPauseRestartButtonClickMsg);
-        MessageHelper.RemoveListenerEndFrame<PauseLobbyButtonClickMsg>(OnPauseLobbyButtonClickMsg);
-        Time.timeScale = 1f;
+        public override void Send()
+        {
+            Message.Send(this);
+        }
     }
 
-    void OnPauseButtonClickMsg(PauseButtonClickMsg msg)
+    [SkipRename]
+    public class PauseRestartButtonClickMsg : VoidMessageBase
     {
-        pausePopup.SetActive(true);
-        Time.timeScale = 0f;
+        public override void Send()
+        {
+            Message.Send(this);
+        }
     }
 
-    void OnPauseResumeButtonClickMsg(PauseResumeButtonClickMsg msg)
+    [SkipRename]
+    public class PauseLobbyButtonClickMsg : VoidMessageBase
     {
-        pausePopup.SetActive(false);
-        Time.timeScale = 1f;
+        public override void Send()
+        {
+            Message.Send(this);
+        }
     }
 
-    void OnPauseRestartButtonClickMsg(PauseRestartButtonClickMsg msg)
+    public class PauseDialog : DialogBase
     {
-        Message.Send(new GameStateChangeMsg(GameStateManager.State.Intro));
-    }
+        public GameObject pausePopup;
 
-    void OnPauseLobbyButtonClickMsg(PauseLobbyButtonClickMsg msg)
-    {
-        Message.Send(new GameStateChangeMsg(GameStateManager.State.Lobby));
+        private void OnEnable()
+        {
+            pausePopup.SetActive(false);
+            Message.AddListener<PauseButtonClickMsg>(OnPauseButtonClickMsg);
+            Message.AddListener<PauseResumeButtonClickMsg>(OnPauseResumeButtonClickMsg);
+            Message.AddListener<PauseRestartButtonClickMsg>(OnPauseRestartButtonClickMsg);
+            Message.AddListener<PauseLobbyButtonClickMsg>(OnPauseLobbyButtonClickMsg);
+        }
+
+        private void OnDisable()
+        {
+            MessageHelper.RemoveListenerEndFrame<PauseButtonClickMsg>(OnPauseButtonClickMsg);
+            MessageHelper.RemoveListenerEndFrame<PauseResumeButtonClickMsg>(OnPauseResumeButtonClickMsg);
+            MessageHelper.RemoveListenerEndFrame<PauseRestartButtonClickMsg>(OnPauseRestartButtonClickMsg);
+            MessageHelper.RemoveListenerEndFrame<PauseLobbyButtonClickMsg>(OnPauseLobbyButtonClickMsg);
+            Time.timeScale = 1f;
+        }
+
+        void OnPauseButtonClickMsg(PauseButtonClickMsg msg)
+        {
+            pausePopup.SetActive(true);
+            Time.timeScale = 0f;
+        }
+
+        void OnPauseResumeButtonClickMsg(PauseResumeButtonClickMsg msg)
+        {
+            pausePopup.SetActive(false);
+            Time.timeScale = 1f;
+        }
+
+        void OnPauseRestartButtonClickMsg(PauseRestartButtonClickMsg msg)
+        {
+            Message.Send(new GameStateChangeMsg(GameStateManager.State.Intro));
+        }
+
+        void OnPauseLobbyButtonClickMsg(PauseLobbyButtonClickMsg msg)
+        {
+            Message.Send(new GameStateChangeMsg(GameStateManager.State.Lobby));
+        }
     }
 }

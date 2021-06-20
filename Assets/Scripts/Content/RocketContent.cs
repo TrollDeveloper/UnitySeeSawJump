@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
+using Item;
+using Character;
+using UI;
+using UI.Dialog;
 
 public class RocketContent : InGameContentBase
 {
