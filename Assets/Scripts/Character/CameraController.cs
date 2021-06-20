@@ -131,11 +131,13 @@ public class CameraController : MonoBehaviour
 
     void OnCameraFadeInMsg(CameraFadeInMsg msg)
     {
+        camTransition.DurationEnter = msg.duration;
         camTransition.TransitionEnter();
     }
 
     void OnCameraFadeOutMsg(CameraFadeOutMsg msg)
     {
+        camTransition.DurationExit = msg.duration;
         camTransition.TransitionExit();
     }
 

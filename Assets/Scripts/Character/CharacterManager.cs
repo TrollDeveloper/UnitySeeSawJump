@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
 using Item;
-
+using Content;
 namespace Character
 {
     public class CharacterChangeStateFromGameStateMsg : Message

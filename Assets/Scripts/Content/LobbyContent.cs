@@ -7,49 +7,54 @@ using Character;
 using UI;
 using UI.Dialog;
 
-public class LobbyContent : InGameContentBase
+namespace Content
 {
-    public override void Enter()
+    public class LobbyContent : InGameContentBase
     {
-        base.Enter();
-        //Set Character Lobby Position.
-        Message.Send(new CharacterChangeStateFromGameStateMsg(GameStateManager.State.Lobby));
-        //Set Camera SeeSaw Position.
-        Message.Send(new CameraStateChangeMsg(CameraController.State.SeeSaw));
-        //Turn On Lobby UI. 
-        UIManager.Instance.RequestDialogEnter<LobbyDialog>();
-        UIManager.Instance.RequestDialogExit<PauseDialog>();
-        UIManager.Instance.RequestDialogExit<HeightDialog>();
+        public override void Enter()
+        {
+            base.Enter();
+            //Set Character Lobby Position.
+            Message.Send(new CharacterChangeStateFromGameStateMsg(GameStateManager.State.Lobby));
+            //Set Camera SeeSaw Position.
+            Message.Send(new CameraStateChangeMsg(CameraController.State.SeeSaw));
+            Message.Send(new CameraFadeInMsg(0f));
 
-        Message.Send(new CleanUpAllItemMsg());
+            //Turn On Lobby UI. 
+            UIManager.Instance.RequestDialogEnter<LobbyDialog>();
+            UIManager.Instance.RequestDialogExit<PauseDialog>();
+            UIManager.Instance.RequestDialogExit<HeightDialog>();
 
-        Message.AddListener<TouchDownMsg>(OnTouchDownMsg);
-        Message.AddListener<StartButtonClickMsg>(OnStartButtonClickMsg);
-    }
+            Message.Send(new CleanUpAllItemMsg());
 
-    public override void Exit()
-    {
-        base.Exit();
-        //Turn Off Lobby UI.
-        UIManager.Instance.RequestDialogExit<LobbyDialog>();
+            Message.AddListener<TouchDownMsg>(OnTouchDownMsg);
+            Message.AddListener<StartButtonClickMsg>(OnStartButtonClickMsg);
+        }
 
-        MessageHelper.RemoveListenerEndFrame<TouchDownMsg>(OnTouchDownMsg);
-        MessageHelper.RemoveListenerEndFrame<StartButtonClickMsg>(OnStartButtonClickMsg);
-    }
+        public override void Exit()
+        {
+            base.Exit();
+            //Turn Off Lobby UI.
+            UIManager.Instance.RequestDialogExit<LobbyDialog>();
 
-    void GameStart()
-    {
-        //ChangeState To Intro.
-        Message.Send(new GameStateChangeMsg(GameStateManager.State.Intro));
-    }
+            MessageHelper.RemoveListenerEndFrame<TouchDownMsg>(OnTouchDownMsg);
+            MessageHelper.RemoveListenerEndFrame<StartButtonClickMsg>(OnStartButtonClickMsg);
+        }
 
-    void OnTouchDownMsg(TouchDownMsg msg)
-    {
-        GameStart();
-    }
+        void GameStart()
+        {
+            //ChangeState To Intro.
+            Message.Send(new GameStateChangeMsg(GameStateManager.State.Intro));
+        }
 
-    void OnStartButtonClickMsg(StartButtonClickMsg msg)
-    {
-        GameStart();
+        void OnTouchDownMsg(TouchDownMsg msg)
+        {
+            GameStart();
+        }
+
+        void OnStartButtonClickMsg(StartButtonClickMsg msg)
+        {
+            GameStart();
+        }
     }
 }

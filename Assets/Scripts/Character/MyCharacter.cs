@@ -4,6 +4,7 @@ using UnityEngine;
 using CodeControl;
 using DG.Tweening;
 using Item;
+using Content;
 
 namespace Character
 {

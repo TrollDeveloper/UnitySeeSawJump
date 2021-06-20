@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
 
-public class InGameContentBase : MonoBehaviour
+namespace Content
 {
-    protected bool isActive = false;
-    public virtual void Enter()
+    public class InGameContentBase : MonoBehaviour
     {
-        isActive = true;
-    }
-    public virtual void Exit()
-    {
-        isActive = false;
+        protected bool isActive = false;
+
+        public virtual void Enter()
+        {
+            isActive = true;
+        }
+
+        public virtual void Exit()
+        {
+            isActive = false;
+        }
     }
 }
