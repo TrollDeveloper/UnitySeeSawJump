@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
+
 public class GameContentModel : Model
 {
     public float targetHeight;
     public float characterHeight;
-    public float energy;
-    public int getItem;
-    public int totalItem;
+    public int curEnergy;
+    public int totalEnergy;
 
     public void Init()
     {
@@ -18,8 +18,7 @@ public class GameContentModel : Model
 
     public void Reset()
     {
-        getItem = 0;
-        totalItem = 0;
-        energy = 0;
+        curEnergy = 0;
+        totalEnergy = 0;
     }
 }

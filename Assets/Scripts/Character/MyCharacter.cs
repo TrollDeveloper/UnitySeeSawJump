@@ -8,6 +8,8 @@ using Content;
 
 namespace Character
 {
+    #region Message
+
     public class CharacterJumpingCompleteMsg : Message
     {
     }
@@ -23,6 +25,16 @@ namespace Character
     public class CharacterDownfallCompleteMsg : Message
     {
     }
+
+    public class CharacterActiveMagneticMsg : Message
+    {
+    }
+
+    public class CharacterActiveRocketMsg : Message
+    {
+    }
+
+    #endregion
 
     public partial class MyCharacter : MonoBehaviour
     {
@@ -68,6 +80,8 @@ namespace Character
 
         GameContentModel contentModel;
 
+        private bool downfallComplete = false;
+
         private void Awake()
         {
             animator = GetComponent<Animator>();
@@ -107,8 +121,9 @@ namespace Character
             Vector3 position = transform.position;
 
             position -= Vector3.up * Time.deltaTime * 10f;
-            if (position.y < 15f)
+            if (position.y < 15f && downfallComplete == false)
             {
+                downfallComplete = true;
                 Message.Send(new CharacterDownfallCompleteMsg());
             }
 
@@ -272,6 +287,7 @@ namespace Character
                 case State.DonwfallWait:
                     break;
                 case State.Downfall:
+                    downfallComplete = false;
                     Message.AddListener<MoveLastFingerPositionMsg>(OnMoveLastFingerPositionMsg);
                     break;
                 case State.Selecting:

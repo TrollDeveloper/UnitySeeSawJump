@@ -1,9 +1,14 @@
 using UnityEngine;
+using CodeControl;
 
 namespace Item
 {
-    public class ItemScore : MonoBehaviour
+    public class ItemScore : MyItem
     {
-        
+
+        public override void OnHit()
+        {
+            base.OnHit();
+        }
     }
 }

@@ -125,7 +125,7 @@ namespace Content
 
             //Calculate Score.
             var contentModel = Model.First<GameContentModel>();
-            currentPower = (float) contentModel.getItem / contentModel.totalItem;
+            currentPower = (float) contentModel.curEnergy / contentModel.totalEnergy;
 
             if (jumpGage > 0.8f && jumpGage < 0.9f)
             {

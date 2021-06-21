@@ -22,7 +22,7 @@ namespace UI.Dialog
         void Update()
         {
             text.text = $"CurHeight : {contentModel.characterHeight}\n" +
-                        $"Energy : {((float) contentModel.getItem / contentModel.totalItem)}";
+                        $"Energy : {((float) contentModel.curEnergy / contentModel.totalEnergy)}";
         }
     }
 }

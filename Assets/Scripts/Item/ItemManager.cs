@@ -35,11 +35,13 @@ namespace Item
             GameContentModel model = Model.First<GameContentModel>();
             float targetHeight = model.targetHeight;
 
-            int itemCount = 0;
             float x = Random.Range(-4f, 4f);
             for (float y = 15f; y < targetHeight - 5f; y += 1.5f)
             {
-                var newItem = ObjectPoolManager.Instance.SpawnObject(PrefabManager.Instance.GetPrefab(200));
+                //TODO : Get Component ÃÖÀûÈ­ 
+                var newItem =
+                    ObjectPoolManager.Instance.SpawnObject(
+                        PrefabManager.Instance.GetPrefab(Random.Range(0, 20) == 0 ? 201 : 200)).GetComponent<MyItem>();
 
                 x += Random.Range(-1f, 1f);
                 if (x > 4f)
@@ -52,10 +54,8 @@ namespace Item
                 }
 
                 newItem.transform.position = new Vector3(x, y, 0f);
-                itemCount++;
+                newItem.Init();
             }
-
-            model.totalItem = itemCount;
         }
     }
 }
