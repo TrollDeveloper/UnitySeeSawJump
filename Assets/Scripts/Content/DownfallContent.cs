@@ -19,6 +19,8 @@ namespace Content
             //Camera State Change.
             Message.Send(new CameraStateChangeMsg(CameraController.State.Downfall));
 
+            UIManager.Instance.RequestDialogEnter<DownfallDialog>();
+
             UIManager.Instance.RequestDialogEnter<HeightDialog>();
 
 
@@ -37,6 +39,7 @@ namespace Content
 
             //Control UI Off.
             UIManager.Instance.RequestDialogExit<HeightDialog>();
+            UIManager.Instance.RequestDialogExit<DownfallDialog>();
 
             Message.Send(new CleanUpAllItemMsg());
             MessageHelper.RemoveListenerEndFrame<CharacterDownfallCompleteMsg>(OnCharacterDownfallCompleteMsg);

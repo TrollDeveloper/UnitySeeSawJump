@@ -9,10 +9,11 @@ using CodeControl;
 public class GameSettingModel : Model
 {
     [Skip]
-    public enum ControlType
+    public enum ControlType : int
     {
-        TargetPoint,
+        TargetPoint = 0,
         Direction,
+        Slider,
     }
 
     public ControlType controlType;

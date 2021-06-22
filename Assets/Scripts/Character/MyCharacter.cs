@@ -136,7 +136,8 @@ namespace Character
 
             //ControlType == MovePosition.
             float controlDirection = 0;
-            if (Model.First<GameSettingModel>().controlType == GameSettingModel.ControlType.TargetPoint)
+            var controlType = Model.First<GameSettingModel>().controlType;
+            if (controlType == GameSettingModel.ControlType.TargetPoint)
             {
                 Vector3 worldPosition = Camera.main.ViewportToWorldPoint(new Vector3(lastTouchPointX, 0.5f, 10f));
 
@@ -152,11 +153,15 @@ namespace Character
                     transform.position = position;
                 }
             }
-            else
+            else if (controlType == GameSettingModel.ControlType.Direction)
             {
                 controlDirection = lastTouchPointX > 0.5 ? 1 : -1;
-                // controlDirection = (lastTouchPointX - 0.5f) * 2f;
             }
+            else
+            {
+                controlDirection = (lastTouchPointX - 0.5f) * 2f;
+            }
+
 
             position.x += controlDirection * 5f * Time.deltaTime;
             position.x = Mathf.Clamp(position.x, -4.5f, 4.5f);
