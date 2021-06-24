@@ -244,11 +244,8 @@ namespace Character
                     lastSequence.Append(transform.DOMove(transform.position + Vector3.up * 3f, 1.5f)
                         .SetEase(Ease.OutCubic));
 
-                    var tween = transform.DOMove(targetSeeSawSocket.position, 0.5f);
-                    tween.onComplete = () =>
-                    {
-                        Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg());
-                    };
+                    var tween = transform.DOMove(targetSeeSawSocket.position, 0.3f);
+                    tween.onComplete = () => { LandingComplete((true)); };
                     lastSequence.AppendInterval(0.5f).Append(tween);
 
                     break;
@@ -265,21 +262,16 @@ namespace Character
                 case State.SeeSawLanding:
 
                     tween = transform.DOMove(targetSeeSawSocket.position, 0.5f);
-                    tween.onComplete = () =>
-                    {
-                        Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg());
-                    };
+                    tween.onComplete = () => { LandingComplete((true)); };
                     lastSequence.AppendInterval(0.5f).Append(tween);
 
                     break;
                 case State.SeeSawLandingFail:
-                    transform.position = new Vector3(side == CharacterManager.CharacterSide.Left ? -3f : 3f,
+                    float offset = side == CharacterManager.CharacterSide.Left ? -1.5f : 1.5f;
+                    transform.position = new Vector3(transform.position.x + offset,
                         transform.position.y, transform.position.z);
-                    tween = transform.DOMove(targetSeeSawSocket.position, 0.5f);
-                    tween.onComplete = () =>
-                    {
-                        Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg());
-                    };
+                    tween = transform.DOMove(new Vector3(transform.position.x, -7f, transform.position.z), 0.5f);
+                    tween.onComplete = () => { LandingComplete((false)); };
                     lastSequence.AppendInterval(0.5f).Append(tween);
                     break;
                 case State.SeeSawLandingComplete:
@@ -299,6 +291,15 @@ namespace Character
                     break;
                 default:
                     break;
+            }
+        }
+
+        public void LandingComplete(bool isSuccess)
+        {
+            Message.Send<CharacterLandingCompleteMsg>(new CharacterLandingCompleteMsg());
+            if (isSuccess)
+            {
+                Message.Send(new CameraShakeMsg(CameraController.ShakeType.Landing));
             }
         }
 

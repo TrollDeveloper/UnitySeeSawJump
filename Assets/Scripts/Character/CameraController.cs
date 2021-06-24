@@ -19,26 +19,41 @@ public class CameraStateChangeMsg : Message
 
 public class CameraFadeInMsg : Message
 {
+    public float duration;
+
     public CameraFadeInMsg(float duration)
     {
         this.duration = duration;
     }
-
-    public float duration;
 }
 
 public class CameraFadeOutMsg : Message
 {
+    public float duration;
+
     public CameraFadeOutMsg(float duration)
     {
         this.duration = duration;
     }
+}
 
-    public float duration;
+public class CameraShakeMsg : Message
+{
+    public CameraController.ShakeType type;
+
+    public CameraShakeMsg(CameraController.ShakeType type)
+    {
+        this.type = type;
+    }
 }
 
 public class CameraController : MonoBehaviour
 {
+    public enum ShakeType : int
+    {
+        Landing = 0,
+    }
+
     public enum State
     {
         SeeSaw,
@@ -52,6 +67,7 @@ public class CameraController : MonoBehaviour
     private ProCamera2DTransitionsFX camTransition;
     private ProCamera2D proCamera;
     private ProCamera2DNumericBoundaries boundaries;
+    private ProCamera2DShake cameraShake;
     private Tweener offsetTweener;
 
     // Start is called before the first frame update
@@ -61,10 +77,12 @@ public class CameraController : MonoBehaviour
         camTransition = GetComponent<ProCamera2DTransitionsFX>();
         boundaries = GetComponent<ProCamera2DNumericBoundaries>();
         boundaries.enabled = false;
+        cameraShake = GetComponent<ProCamera2DShake>();
 
         Message.AddListener<CameraStateChangeMsg>(OnCameraChangeStateMsg);
         Message.AddListener<CameraFadeInMsg>(OnCameraFadeInMsg);
         Message.AddListener<CameraFadeOutMsg>(OnCameraFadeOutMsg);
+        Message.AddListener<CameraShakeMsg>(OnCameraShakeMsg);
         Message.AddListener<CharacterSideChangedMsg>(OnCharacterSideChangedMsg);
     }
 
@@ -82,6 +100,7 @@ public class CameraController : MonoBehaviour
 
     public void ChangeState(State newState)
     {
+        cameraShake.StopShaking();
         switch (state)
         {
             case State.Downfall:
@@ -122,6 +141,16 @@ public class CameraController : MonoBehaviour
 
         proCamera.AddCameraTarget(newTargetCharacter.transform);
         targetCharacter = newTargetCharacter;
+    }
+
+    public void ShakeCamera(ShakeType shakeType)
+    {
+        cameraShake.Shake((int) shakeType);
+    }
+
+    void OnCameraShakeMsg(CameraShakeMsg msg)
+    {
+        ShakeCamera(msg.type);
     }
 
     void OnCameraChangeStateMsg(CameraStateChangeMsg msg)
