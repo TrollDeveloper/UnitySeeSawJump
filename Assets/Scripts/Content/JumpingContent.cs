@@ -9,6 +9,32 @@ using UI.Dialog;
 
 namespace Content
 {
+    public class SetJumpingGageInfoMsg : Message
+    {
+        public float minNormal;
+        public float maxNormal;
+        public float minPerfect;
+        public float maxPerfect;
+
+        public SetJumpingGageInfoMsg(float minNormal, float maxNormal, float minPerfect, float maxPerfect)
+        {
+            this.minNormal = minNormal;
+            this.maxNormal = maxNormal;
+            this.minPerfect = minPerfect;
+            this.maxPerfect = maxPerfect;
+        }
+    }
+
+    public class UpdateJumpingGageMsg : Message
+    {
+        public float gage;
+
+        public UpdateJumpingGageMsg(float gage)
+        {
+            this.gage = gage;
+        }
+    }
+
     public class JumpingContent : InGameContentBase
     {
         const int MaxJumpCount = 5;
@@ -65,7 +91,6 @@ namespace Content
             yield return new WaitForSeconds(1f);
             //Jumping UI ON
             UIManager.Instance.RequestDialogEnter<JumpingDialog>();
-
             Message.AddListener<TouchDownMsg>(OnTouchDownMsg);
 
             StartCoroutine("JumpGageUpdateCoroutine");
@@ -81,11 +106,12 @@ namespace Content
 
         IEnumerator JumpGageUpdateCoroutine()
         {
+            Message.Send(new SetJumpingGageInfoMsg(0.6f, 1.0f, 0.8f, 0.9f));
+
             jumpGage = 0f;
             int jumpCount = 0;
 
             //테스트용 임시 UI 링크.
-            Text text = GameObject.Find("GageText").GetComponent<Text>();
             while (true)
             {
                 yield return null;
@@ -100,7 +126,7 @@ namespace Content
                     }
                 }
 
-                text.text = (Mathf.Clamp01(jumpGage) * 100f).ToString("n00") + "%";
+                Message.Send(new UpdateJumpingGageMsg(jumpGage));
             }
 
             OnLandingAction();
