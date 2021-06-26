@@ -20,10 +20,9 @@ namespace Content
             Message.Send(new CameraStateChangeMsg(CameraController.State.SeeSaw));
             Message.Send(new CameraFadeInMsg(0f));
 
-            //Turn On Lobby UI. 
+            //Turn On Lobby UI.
+            UIManager.Instance.ResetDialog();
             UIManager.Instance.RequestDialogEnter<LobbyDialog>();
-            UIManager.Instance.RequestDialogExit<PauseDialog>();
-            UIManager.Instance.RequestDialogExit<HeightDialog>();
 
             Message.Send(new CleanUpAllItemMsg());
 

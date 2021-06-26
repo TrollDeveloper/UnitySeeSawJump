@@ -23,9 +23,9 @@ namespace Content
             Message.Send(new CharacterChangeStateFromGameStateMsg(GameStateManager.State.Intro));
             //Camera Set.
             Message.Send(new CameraStateChangeMsg(CameraController.State.SeeSaw));
-
-            UIManager.Instance.RequestDialogExit<PauseDialog>();
-
+            
+            //ResetDialog ( When Restart ) 
+            UIManager.Instance.ResetDialog();
             //Msg AddListener.
             Message.AddListener<CharacterJumpingCompleteMsg>(OnCharacterJumpingCompleteMsg);
             Message.AddListener<CharacterLandingCompleteMsg>(OnCharacterLandingCompleteMsg);

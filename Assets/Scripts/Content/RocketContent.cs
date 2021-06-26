@@ -25,10 +25,11 @@ namespace Content
             Message.Send<CameraFadeInMsg>(new CameraFadeInMsg(0.5f));
             //Set Camera State.
             Message.Send(new CameraStateChangeMsg(CameraController.State.Rocket));
-            //Change UI.
-            UIManager.Instance.RequestDialogEnter<HeightDialog>();
-            UIManager.Instance.RequestDialogEnter<PauseDialog>();
 
+            //ResetDialog ( When Retry) 
+            UIManager.Instance.ResetDialog();
+            //Change UI.
+            UIManager.Instance.RequestDialogEnter<PauseDialog>();
 
             Message.AddListener<CharacterRocketCompleteMsg>(OnCharacterRocketCompleteMsg);
         }

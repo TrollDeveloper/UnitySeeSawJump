@@ -16,6 +16,7 @@ namespace UI.Dialog
             Message.Send(this);
         }
     }
+
     [SkipRename]
     public class SettingPopupCloseButtonClickMsg : VoidMessageBase
     {
@@ -28,7 +29,7 @@ namespace UI.Dialog
     [SkipRename]
     public class SettingChangeControlTypeButtonClickMsg : VoidMessageBase
     {
-        [OdinSerialize] public GameSettingModel.ControlType type;
+        [SkipRename] [OdinSerialize] public GameSettingModel.ControlType type;
 
         public override void Send()
         {

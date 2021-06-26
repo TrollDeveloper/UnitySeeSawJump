@@ -17,6 +17,7 @@ public class GameSettingModel : Model
     }
 
     public ControlType controlType;
+    public float energySuccessThreshold = 0.8f;
 
     public void Init()
     {

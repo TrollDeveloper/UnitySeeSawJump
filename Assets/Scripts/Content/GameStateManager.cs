@@ -72,8 +72,6 @@ namespace Content
 
                 T newContent = newObject.AddComponent<T>();
                 contentList.Add(state, newContent);
-
-                DebugLog.Log("Add Content State : " + state);
             }
         }
 

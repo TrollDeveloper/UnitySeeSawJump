@@ -65,6 +65,7 @@ namespace Content
             base.Exit();
             //Jumping UI Off.
             UIManager.Instance.RequestDialogExit<JumpingDialog>();
+            UIManager.Instance.RequestDialogExit<EnergyDialog>();
 
             //Msg RemoveListener.
             MessageHelper.RemoveListenerEndFrame<CharacterJumpingCompleteMsg>(OnCharacterJumpingCompleteMsg);
@@ -148,6 +149,7 @@ namespace Content
             StopCoroutine("JumpGageUpdateCoroutine");
             //Hide Jump UI.
             UIManager.Instance.RequestDialogExit<JumpingDialog>();
+            UIManager.Instance.RequestDialogExit<EnergyDialog>();
 
             //Calculate Score.
             var contentModel = Model.First<GameContentModel>();

@@ -28,6 +28,16 @@ namespace UI
                     dialogMap.Add(type, dialogs[i]);
                 }
             }
+
+            ResetDialog();
+        }
+
+        public void ResetDialog()
+        {
+            foreach (KeyValuePair<Type, DialogBase> keyValuePair in dialogMap)
+            {
+                keyValuePair.Value.gameObject.SetActive(false);
+            }
         }
 
         public void RequestDialogEnter<T>() where T : DialogBase
